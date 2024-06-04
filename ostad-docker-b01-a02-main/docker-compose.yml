@@ -1,0 +1,32 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontendApp
+    ports:
+      - "3000:5173"
+  backend:
+    build: ./backend/app
+    container_name: backendApp
+    depends_on: [db]
+    ports:
+      - "8989:5000"
+  db:
+    build: ./postgres
+    container_name: appDB
+    ports:
+      - 5432:5432
+    restart: always
+    volumes: 
+      - db_data:/var/lib/postgresql/date 
+  redis:
+    image: redis:6.2-alpine
+    container_name: redisDB
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass password
+    volumes: 
+      - cache:/data
+volumes:
+  db_data:
+  cache:
